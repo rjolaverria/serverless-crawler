@@ -12,9 +12,20 @@ authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
 -->
 
 
-# Serverless Framework AWS Python Example
+# Serverless Crawl - Serverless Framework AWS
 
-This template demonstrates how to deploy a Python function running on AWS Lambda using the traditional Serverless Framework. The deployed function does not include any event definitions as well as any kind of persistence (database). For more advanced configurations check out the [examples repo](https://github.com/serverless/examples/) which includes integrations with SQS, DynamoDB or examples of functions that are triggered in `cron`-like manner. For details about configuration of specific `events`, please refer to our [documentation](https://www.serverless.com/framework/docs/providers/aws/events/).
+This was generated using the Serverless Framework AWS Python template. 
+
+This is an example of a serverless static website crawler using AWS Lambda, SQS, S3, and DynamoDB. 
+
+**Note:** You may be notified by AWS about recursive  loops with Lambda. This is because of the Crawl SQS handler Lambda also writing to the same SQS queue that it is polling from. This is mitigated by using the DynamoDB table to track the URLs that have been queued.
+
+## Plugins
+- serverless-python-requirements
+- serverless-lift
+
+## Architecture
+![diagram](./images/serverlessCrawl.png)
 
 ## Usage
 
@@ -34,7 +45,7 @@ Deploying aws-python-project to stage dev (us-east-1)
 ✔ Service deployed to stack aws-python-project-dev (112s)
 
 functions:
-  hello: aws-python-project-dev-hello (1.5 kB)
+  hello: aws-python-project-dev-start (1.5 kB)
 ```
 
 ### Invocation
@@ -42,16 +53,7 @@ functions:
 After successful deployment, you can invoke the deployed function by using the following command:
 
 ```bash
-serverless invoke --function hello
-```
-
-Which should result in response similar to the following:
-
-```json
-{
-    "statusCode": 200,
-    "body": "{\"message\": \"Go Serverless v3.0! Your function executed successfully!\", \"input\": {}}"
-}
+serverless invoke --function start
 ```
 
 ### Local development
@@ -59,16 +61,7 @@ Which should result in response similar to the following:
 You can invoke your function locally by using the following command:
 
 ```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
-
-```
-{
-    "statusCode": 200,
-    "body": "{\"message\": \"Go Serverless v3.0! Your function executed successfully!\", \"input\": {}}"
-}
+serverless invoke local --function start
 ```
 
 ### Bundling dependencies

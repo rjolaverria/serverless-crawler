@@ -2,10 +2,35 @@ service: serverless-crawl
 
 frameworkVersion: '3'
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: python3.9
+  stage: ${opt:stage, 'dev'}
+  environment:
+    DOMAIN: ${env:DOMAIN}
+    BASE_URL: ${env:BASE_URL}
+    CRAWL_QUEUE_URL: ${construct:CrawlQueue.queueUrl}
+    CRAWL_TABLE_NAME: ${construct:CrawlTable.tableName}
+    PAGES_BUCKET_NAME: ${construct:CrawlBucket.bucketName}
+
+constructs:
+  CrawlQueue:
+    type: queue
+    worker:
+      handler: src/handlers/crawl.run
+      timeout: 30
+      maxConcurrency: 10
+  CrawlTable:
+    type: database/dynamodb-single-table  
+  CrawlBucket:
+    type: storage
 
 functions:
-  hello:
-    handler: handler.hello
+  start:
+    handler: src/handlers/start.run
+
+plugins:
+  - serverless-python-requirements
+  - serverless-lift
